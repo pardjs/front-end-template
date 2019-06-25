@@ -1,0 +1,22 @@
+kind: pipeline
+name: default
+
+steps:
+- name: test
+  image: node:10
+  commands:
+  - npm i yarn -g
+  - yarn
+  - yarn run test
+  when:
+    event:
+      - tag
+- name: apply ansible playbook
+  image: plugins/ansible:1
+  settings:
+    playbook: .ansible/playbook.yml
+    private_key:
+      from_secret: ansible_private_key
+  when:
+    event:
+    - tag
