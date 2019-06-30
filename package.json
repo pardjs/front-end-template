@@ -17,7 +17,9 @@
     "predeploy": "terraform init ./.deploy",
     "predeploy:current": "yarn run predeploy",
     "deploy": "terraform apply -refresh=true -auto-approve ./.deploy",
-    "deploy:current": "terraform apply -auto-approve -refresh=true -var-file=project-info.json ./.deploy"
+    "deploy:current": "terraform apply -auto-approve -refresh=true -var-file=project-info.json ./.deploy",
+    "postdeploy": "rm ./terraform.tfstate",
+    "postdeploy:current": "yarn run postdeploy"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",

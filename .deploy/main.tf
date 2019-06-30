@@ -29,7 +29,7 @@ variable "appVersion" {
 variable "env" {
   type = "string"
   description = "which envrionment you want to deploy to"
-  default = ""
+  default = "staging"
 }
 
 variable "projectName" {
@@ -37,8 +37,6 @@ variable "projectName" {
   description = "the name of this service for container and folder etc."
   default = "pardjs-front-end-template"
 }
-
-
 
 data "template_file" "docker_compose_file" {
   template = "${file(".deploy/docker-compose.yaml.tpl")}"
@@ -66,10 +64,10 @@ resource "null_resource" "docker_compose" {
     inline = ["mkdir -p /root/deploy/pardjs-front-end-template"]
   }
 
-  # provisioner "file" {
-  #   source = "${var.env}.env"
-  #   destination = "/root/deploy/pardjs-front-end-template/docker-compose.yaml"
-  # }
+  provisioner "file" {
+    source = ".env.${var.env}"
+    destination = "/root/deploy/pardjs-front-end-template/docker-compose.yaml"
+  }
 
   provisioner "file" {
     content     = "${data.template_file.docker_compose_file.rendered}"

@@ -9,7 +9,9 @@
     "nuxt",
     "nuxtjs",
     "pardjs",
-    "precommit"
+    "postdeploy",
+    "precommit",
+    "tfstate"
   ],
   "editor.formatOnSave": false
 }
