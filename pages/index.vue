@@ -7,6 +7,8 @@
       </h1>
       <h2 class="subtitle">
         pard.js front-end template
+        <hr />
+        varFronServerEnv: {{ varFromServerEnv }}
       </h2>
       <div class="links">
         <a href="https://nuxtjs.org/" target="_blank" class="button--green">
@@ -30,6 +32,11 @@ import Logo from '~/components/Logo.vue'
 export default {
   components: {
     Logo
+  },
+  data() {
+    return {
+      varFromServerEnv: window.VUE_APP_VAR
+    }
   }
 }
 </script>

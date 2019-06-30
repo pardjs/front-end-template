@@ -11,5 +11,5 @@
     "pardjs",
     "precommit"
   ],
-  "editor.formatOnSave": true
+  "editor.formatOnSave": false
 }
