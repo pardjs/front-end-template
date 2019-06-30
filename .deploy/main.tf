@@ -1,43 +1,3 @@
-resource "null_resource" "docker-compose" {
-  connection {
-    host = "${var.serverHost}"
-    user = "${var.serverUser}"
-
-    private_key = "${
-      length(var.serverUserPrivateKey) > 0
-      ? var.serverUserPrivateKey
-      : file(var.serverUserPrivateKeyPath)
-    }"
-  }
-
-  provisioner "remote-exec" {
-    inline = ["mkdir -p /root/deploy/template"]
-  }
-
-  provisioner "file" {
-    content = "${templatefile(
-      ".deploy/docker-compose.yaml.tpl",
-      {
-        appVersion = "${var.appVersion}"
-      }
-    )}"
-    destination = "/root/deploy/template/docker-compose.yaml"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "docker-compose -f /root/deploy/template/docker-compose.yaml up -d"
-    ]
-  }
-}
-
-// TF_VAR_serverHost
-variable "serverHost" {
-  type        = "string"
-  description = "the server host to deploy"
-  default     = "devops.do021.com"
-}
-
 // TF_VAR_serverUser
 variable "serverUser" {
   type        = "string"
@@ -63,4 +23,60 @@ variable "serverUserPrivateKey" {
 variable "appVersion" {
   type        = "string"
   description = "the version of current application"
+}
+
+data "template_file" "docker_compose_file" {
+  template = "${file(".deploy/docker-compose.yaml.tpl")}"
+
+  vars {
+    appVersion = "${var.appVersion}"
+    servicePort = "${var.servicePort}"
+  }
+}
+
+
+resource "null_resource" "docker_compose" {
+  connection {
+    host = "${var.serverHost}"
+    user = "${var.serverUser}"
+
+    private_key = "${
+      length(var.serverUserPrivateKey) > 0
+      ? var.serverUserPrivateKey
+      : file(var.serverUserPrivateKeyPath)
+    }"
+  }
+
+  provisioner "remote-exec" {
+    inline = ["mkdir -p /root/deploy/pardjs-front-end-template"]
+  }
+
+  provisioner "file" {
+    content     = "${data.template_file.docker_compose_file.rendered}"
+    destination = "/root/deploy/pardjs-front-end-template/docker-compose.yaml"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "docker-compose -f /root/deploy/pardjs-front-end-template/docker-compose.yaml up -d",
+    ]
+  }
+}
+
+// TF_VAR_serverHost
+variable "serverHost" {
+  type        = "string"
+  description = "the server host to deploy"
+  default     = "devops.do021.com"
+}
+
+variable "servicePort" {
+  type = "string"
+  description = "which port the service will expose on server"
+  default = "30010"
+}
+
+
+output "file_content" {
+  value = "${data.template_file.docker_compose_file.rendered}"
 }
