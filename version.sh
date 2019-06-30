@@ -4,7 +4,7 @@
 
 NODE_VERSION=$(node -p "process.version")
 echo "node.js version: "$NODE_VERSION
-CURRENT_VERSION=$(node -p "const fs=require('fs');const currentConfig=require('$(pwd)/project-info.json');currentConfig.version")
+CURRENT_VERSION=$(node -p "const fs=require('fs');const currentConfig=require('$(pwd)/project-info.json');currentConfig.appVersion")
 VERSION=$1
 echo "current project version "$CURRENT_VERSION
 echo "given project version "$VERSION
@@ -31,7 +31,7 @@ else
   echo "directory clean, go on."
 fi
 
-node -p "const fs=require('fs');const currentConfig=require('$(pwd)/project-info.json');currentConfig.version='$VERSION';fs.writeFileSync('project-info.json', JSON.stringify(currentConfig, null, 2))"
+node -p "const fs=require('fs');const currentConfig=require('$(pwd)/project-info.json');currentConfig.appVersion='$VERSION';fs.writeFileSync('project-info.json', JSON.stringify(currentConfig, null, 2))"
 git add .
 git commit -m "chore(): bump version to $VERSION"
 npm version $VERSION

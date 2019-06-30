@@ -4,7 +4,12 @@
     "ansible",
     "devops",
     "dozto",
+    "gitignore",
     "nginx",
-    "pardjs"
-  ]
+    "nuxt",
+    "nuxtjs",
+    "pardjs",
+    "precommit"
+  ],
+  "editor.formatOnSave": true
 }

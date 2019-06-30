@@ -6,11 +6,10 @@ COPY ./package.json .
 COPY ./yarn.lock .
 RUN yarn
 COPY . .
-RUN yarn run build:prod
+RUN yarn run build
 
-FROM nginx:latest
+FROM nginx:1.16
 COPY --from=builder /dist/ /usr/share/nginx/html
-COPY src/graphql/ /usr/share/nginx/html/graphql
 COPY ./robots.txt /usr/share/nginx/html
 COPY ./.docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./.docker/entrypoint.sh /
