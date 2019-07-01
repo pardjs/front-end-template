@@ -1,8 +1,8 @@
 version: '2'
 services:
-  template:
-    container_name: front-end-template
-    image: registry.cn-shanghai.aliyuncs.com/pardjs/front-end-template:${appVersion}
+  ${projectName}-${serviceName}:
+    container_name: ${projectName}-${serviceName}
+    image: registry.cn-shanghai.aliyuncs.com/${projectName}/${serviceName}:${appVersion}
     ports:
       - "${servicePort}:80"
     volumes:

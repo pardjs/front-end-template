@@ -23,30 +23,31 @@ variable "serverUserPrivateKey" {
 variable "appVersion" {
   type        = "string"
   description = "the version of current application"
-  default = "latest"
-}
-
-variable "env" {
-  type = "string"
-  description = "which envrionment you want to deploy to"
-  default = "staging"
+  default     = "latest"
 }
 
 variable "projectName" {
-  type = "string"
+  type        = "string"
   description = "the name of this service for container and folder etc."
-  default = "pardjs-front-end-template"
+  default     = "pardjs"
+}
+
+variable "serviceName" {
+  type        = "string"
+  description = "the name of this service for container and folder etc."
+  default     = "front-end-template"
 }
 
 data "template_file" "docker_compose_file" {
   template = "${file(".deploy/docker-compose.yaml.tpl")}"
 
   vars {
-    appVersion = "${var.appVersion}"
+    appVersion  = "${var.appVersion}"
     servicePort = "${var.servicePort}"
+    projectName = "${var.projectName}"
+    serviceName = "${var.serviceName}"
   }
 }
-
 
 resource "null_resource" "docker_compose" {
   connection {
@@ -61,22 +62,17 @@ resource "null_resource" "docker_compose" {
   }
 
   provisioner "remote-exec" {
-    inline = ["mkdir -p /root/deploy/pardjs-front-end-template"]
-  }
-
-  provisioner "file" {
-    source = ".env.${var.env}"
-    destination = "/root/deploy/pardjs-front-end-template/docker-compose.yaml"
+    inline = ["mkdir -p /root/deploy/${var.projectName}/${var.serviceName}"]
   }
 
   provisioner "file" {
     content     = "${data.template_file.docker_compose_file.rendered}"
-    destination = "/root/deploy/pardjs-front-end-template/docker-compose.yaml"
+    destination = "/root/deploy/${var.projectName}/${var.serviceName}/docker-compose.yaml"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "docker-compose -f /root/deploy/pardjs-front-end-template/docker-compose.yaml up -d",
+      "docker-compose -f /root/deploy/${var.projectName}/${var.serviceName}/docker-compose.yaml up -d",
     ]
   }
 }
@@ -89,11 +85,10 @@ variable "serverHost" {
 }
 
 variable "servicePort" {
-  type = "string"
+  type        = "string"
   description = "which port the service will expose on server"
-  default = "30011"
+  default     = "30011"
 }
-
 
 output "file_content" {
   value = "${data.template_file.docker_compose_file.rendered}"
